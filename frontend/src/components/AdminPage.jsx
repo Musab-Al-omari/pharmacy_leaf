@@ -87,6 +87,13 @@ export default function AdminPage() {
         myForm,
         { headers: { Authorization: `Bearer ${token}` } }
       );
+      setShowAlertObj({
+        renderAlert: true,
+        title: 'you post successfully?',
+        message: ' ..',
+        flag: true,
+        historyFlag: { flag: false, route: '' },
+      });
       getData();
     } catch (error) {
       console.log(error);
