@@ -47,7 +47,7 @@ const useStyles = makeStyles((theme) => ({
 export default function Login() {
   const classes = useStyles();
   const [loginData, setLoginData] = useState({ email: '', password: '' });
-  const { auth, setAuth } = useAuth();
+  const { setAuth } = useAuth();
   const history = useHistory();
 
   async function login() {
@@ -55,14 +55,14 @@ export default function Login() {
       const encoded = Base64.encode(`${loginData.email}:${loginData.password}`);
 
       const url = 'https://pharmacyleaf.herokuapp.com/api/users/signin';
-      // const url = 'http://localhost:3002/api/users/signin';
+
       const res = await axios.post(
         url,
         {},
         { headers: { Authorization: `Basic ${encoded}` } }
       );
 
-      setAuth(res.data);
+      setAuth(res.data.token);
       cookie.save('token', res.data.token);
       history.push('/products');
     } catch (error) {
