@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { makeStyles } from '@material-ui/core/styles';
 import Card from '@material-ui/core/Card';
 import CardActionArea from '@material-ui/core/CardActionArea';
@@ -10,6 +10,7 @@ import Typography from '@material-ui/core/Typography';
 import axios from 'axios';
 import cookie from 'react-cookies';
 import { useAuth } from '../provider/AuthProvider';
+import AlertDialog from './Alert';
 
 const useStyles = makeStyles({
   cards: {
@@ -36,80 +37,97 @@ const useStyles = makeStyles({
 export default function ListComponent({ medicine, getData }) {
   const classes = useStyles();
   const { auth } = useAuth();
+  const [showAlertObj, setShowAlertObj] = useState({ renderAlert: false });
 
   async function deleteItem(id) {
-    const token = cookie.load('token');
-
-    const url = `https://pharmacyleaf.herokuapp.com/api/users/Medicine/${id}`;
-    // const url = `http://localhost:3002/api/users/Medicine/${id}`;
-    console.log(url);
-    const res = await axios.delete(url, {
-      headers: {
-        Authorization: `Bearer ${token}`,
-      },
-    });
-    console.log(res);
-    getData();
+    try {
+      const token = cookie.load('token');
+      const url = `https://pharmacyleaf.herokuapp.com/api/users/Medicine/${id}`;
+      await axios.delete(url, {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      });
+      getData();
+    } catch (error) {
+      console.log(error);
+      setShowAlertObj({
+        renderAlert: true,
+        title: 'there are error?',
+        message: "couldn't delete the item ",
+        flag: true,
+        historyFlag: { flag: false, route: '' },
+      });
+    }
   }
 
   return (
-    <div className={classes.cards}>
-      {medicine.map((obj) => (
-        <Card className={classes.root} key={obj._id}>
-          <CardActionArea>
-            <CardMedia
-              component="img"
-              alt="Contemplative Reptile"
-              height="140"
-              image={`${obj.imageUrl}`}
-              title="Contemplative Reptile"
-            />
-            <CardContent>
-              <Typography gutterBottom variant="h5" component="h2">
-                {`${obj.title}`}
-              </Typography>
-              <Typography
-                variant="body2"
-                color="textSecondary"
-                component="p"
-                className={classes.descriptions}
-              >
-                {`${obj.descriptions}`}
-              </Typography>
-              <div className={classes.flex}>
-                <Typography variant="caption" display="inline" gutterBottom>
-                  Storage: {`${obj.amount}`}
+    <>
+      {/* alert */}
+      {showAlertObj.renderAlert ? (
+        <AlertDialog
+          showAlertObj={showAlertObj}
+          setShowAlertObj={setShowAlertObj}
+        />
+      ) : null}
+      <div className={classes.cards}>
+        {medicine.map((obj) => (
+          <Card className={classes.root} key={obj._id}>
+            <CardActionArea>
+              <CardMedia
+                component="img"
+                alt="Contemplative Reptile"
+                height="140"
+                image={`${obj.imageUrl}`}
+                title="Contemplative Reptile"
+              />
+              <CardContent>
+                <Typography gutterBottom variant="h5" component="h2">
+                  {`${obj.title}`}
                 </Typography>
-                <Typography variant="caption" display="inline" gutterBottom>
-                  Price:{`${obj.price} $`}
+                <Typography
+                  variant="body2"
+                  color="textSecondary"
+                  component="p"
+                  className={classes.descriptions}
+                >
+                  {`${obj.descriptions}`}
                 </Typography>
-              </div>
-              <div className={classes.flex}>
-                <Typography variant="caption" display="inline" gutterBottom>
-                  Type :{`${obj.type}`}
-                </Typography>
-                <Typography variant="caption" display="inline" gutterBottom>
-                  Recipe :
-                  {obj.MedicinalRecipe === true ? 'Needed' : 'Not Needed'}
-                </Typography>
-              </div>
-            </CardContent>
-          </CardActionArea>
-          {auth ? (
-            <CardActions>
-              <Button
-                size="small"
-                color="primary"
-                onClick={() => {
-                  deleteItem(obj._id);
-                }}
-              >
-                delete
-              </Button>
-            </CardActions>
-          ) : null}
-        </Card>
-      ))}
-    </div>
+                <div className={classes.flex}>
+                  <Typography variant="caption" display="inline" gutterBottom>
+                    Storage: {`${obj.amount}`}
+                  </Typography>
+                  <Typography variant="caption" display="inline" gutterBottom>
+                    Price:{`${obj.price} $`}
+                  </Typography>
+                </div>
+                <div className={classes.flex}>
+                  <Typography variant="caption" display="inline" gutterBottom>
+                    Type :{`${obj.type}`}
+                  </Typography>
+                  <Typography variant="caption" display="inline" gutterBottom>
+                    Recipe :
+                    {obj.MedicinalRecipe === true ? 'Needed' : 'Not Needed'}
+                  </Typography>
+                </div>
+              </CardContent>
+            </CardActionArea>
+            {auth ? (
+              <CardActions>
+                <Button
+                  size="small"
+                  color="primary"
+                  onClick={() => {
+                    deleteItem(obj._id);
+                  }}
+                >
+                  delete
+                </Button>
+              </CardActions>
+            ) : null}
+          </Card>
+        ))}
+      </div>
+    </>
   );
 }

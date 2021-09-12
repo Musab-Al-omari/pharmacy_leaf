@@ -17,6 +17,7 @@ import {
   Typography,
 } from '@material-ui/core';
 import ListComponent from './ListComponent';
+import AlertDialog from './Alert';
 
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -55,6 +56,8 @@ export default function AdminPage() {
     imageUrl: '',
   });
   const [medicine, setMedicine] = useState([]);
+  const [showAlertObj, setShowAlertObj] = useState({ renderAlert: false });
+
   async function getData() {
     try {
       const response = await axios.get(
@@ -63,6 +66,13 @@ export default function AdminPage() {
       setMedicine(response.data);
     } catch (error) {
       console.log(error);
+      setShowAlertObj({
+        renderAlert: true,
+        title: 'there are error?',
+        message: "couldn't GET the data   ",
+        flag: true,
+        historyFlag: { flag: false, route: '' },
+      });
     }
   }
   useEffect(() => {
@@ -72,21 +82,33 @@ export default function AdminPage() {
   async function postMedicine() {
     try {
       const token = cookie.load('token');
-
-      const response = await axios.post(
+      await axios.post(
         'https://pharmacyleaf.herokuapp.com/api/users/Medicine',
         myForm,
         { headers: { Authorization: `Bearer ${token}` } }
       );
       getData();
-      console.log(response);
     } catch (error) {
       console.log(error);
+      setShowAlertObj({
+        renderAlert: true,
+        title: 'there are error?',
+        message: "we couldn't send the data to the server  ",
+        flag: true,
+        historyFlag: { flag: false, route: '' },
+      });
     }
   }
 
   return (
     <div className={classes.root}>
+      {/* alert */}
+      {showAlertObj.renderAlert ? (
+        <AlertDialog
+          showAlertObj={showAlertObj}
+          setShowAlertObj={setShowAlertObj}
+        />
+      ) : null}
       <div className={classes.formContainer}>
         <div className={classes.INNERContainer}>
           <Typography variant="h5">Add Medicine</Typography>

@@ -2,15 +2,10 @@ import React, { useState } from 'react';
 import { makeStyles } from '@material-ui/core/styles';
 import TextField from '@material-ui/core/TextField';
 import Divider from '@material-ui/core/Divider';
-import { useHistory } from 'react-router';
 import { Button, Link, Typography } from '@material-ui/core';
-import Dialog from '@material-ui/core/Dialog';
-import DialogActions from '@material-ui/core/DialogActions';
-import DialogContent from '@material-ui/core/DialogContent';
-import DialogContentText from '@material-ui/core/DialogContentText';
-import DialogTitle from '@material-ui/core/DialogTitle';
 import image from '../assets/large_pharmacyleaf.png';
 import axios from 'axios';
+import AlertDialog from './Alert';
 
 const useStyles = makeStyles((theme) => ({
   container: {
@@ -50,20 +45,7 @@ export default function Register() {
   const classes = useStyles();
 
   const [NewUser, setNewUser] = useState({});
-  const [open, setOpen] = useState(false);
-  const [message, setMessage] = useState({});
-  const history = useHistory();
-
-  const handleClickOpen = () => {
-    setOpen(true);
-  };
-
-  const handleClose = () => {
-    if (message.flag) {
-      history.push('/');
-    }
-    setOpen(false);
-  };
+  const [showAlertObj, setShowAlertObj] = useState({ renderAlert: false });
 
   async function registerNewAdmin() {
     try {
@@ -71,25 +53,27 @@ export default function Register() {
       //   const url = 'http://localhost:3002/api/users/signup';
       const res = await axios.post(url, NewUser);
       if (res.data.message) {
-        handleClickOpen();
-        setMessage({
+        setShowAlertObj({
+          renderAlert: true,
           title: 'there are error?',
-          text: 'the email exist already',
-          flag: false,
+          message: 'the email exist already',
+          flag: true,
+          historyFlag: { flag: false, route: '' },
         });
       } else {
-        setMessage({
+        setShowAlertObj({
+          renderAlert: true,
           title: 'You registered',
-          text: 'you registered as a new admin would you like to go to the login screen?',
+          message:
+            'you registered as a new admin would you like to go to the login screen?',
           flag: true,
+          historyFlag: { flag: true, route: '/' },
         });
-        handleClickOpen();
       }
     } catch (error) {
       console.log('the email ', error);
     }
   }
-  console.log(NewUser);
 
   return (
     <div className={classes.container}>
@@ -183,34 +167,19 @@ export default function Register() {
 
       <Typography variant="body1" className={classes.text}>
         Already have an Account ?
-        <Link href="/Login" className={classes.textLink}>
+        <Link href="/" className={classes.textLink}>
           {' '}
           Login
         </Link>
       </Typography>
 
       {/* alert */}
-      <Dialog
-        open={open}
-        onClose={handleClose}
-        aria-labelledby="alert-dialog-title"
-        aria-describedby="alert-dialog-description"
-      >
-        <DialogTitle id="alert-dialog-title">{message.title}</DialogTitle>
-        <DialogContent>
-          <DialogContentText id="alert-dialog-description">
-            {message.text}
-          </DialogContentText>
-        </DialogContent>
-        <DialogActions>
-          <Button onClick={handleClose} color="primary">
-            Disagree
-          </Button>
-          <Button onClick={handleClose} color="primary" autoFocus>
-            Agree
-          </Button>
-        </DialogActions>
-      </Dialog>
+      {showAlertObj.renderAlert ? (
+        <AlertDialog
+          showAlertObj={showAlertObj}
+          setShowAlertObj={setShowAlertObj}
+        />
+      ) : null}
     </div>
   );
 }
