@@ -8,6 +8,7 @@ import axios from 'axios';
 import { Base64 } from 'js-base64';
 import { useAuth } from '../provider/AuthProvider';
 import { useHistory } from 'react-router';
+import cookie from 'react-cookies';
 
 const useStyles = makeStyles((theme) => ({
   container: {
@@ -62,6 +63,7 @@ export default function Login() {
       );
 
       setAuth(res.data);
+      cookie.save('token', res.data.token);
       history.push('/products');
     } catch (error) {
       console.log('the email ', error);

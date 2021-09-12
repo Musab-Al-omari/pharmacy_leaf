@@ -2,12 +2,11 @@
 
 const express = require('express');
 const MedicineRouter = express.Router();
-
 const Medicine = require('../Model/Medicine_schema');
-// const bearerAuth = require('./middleware/bearerAuth');
+const bearerAuth = require('./middleware/bearerAuth');
 
 
-MedicineRouter.post('/', async (req, res) => {
+MedicineRouter.post('/', bearerAuth, async (req, res) => {
     try {
         const medicineItem = new Medicine(req.body);
         const medicineItemRecord = await medicineItem.save();
@@ -29,7 +28,7 @@ MedicineRouter.get('/', async (req, res) => {
     }
 });
 
-MedicineRouter.delete('/:id', async (req, res) => {
+MedicineRouter.delete('/:id', bearerAuth, async (req, res) => {
     try {
         const id = req.params.id;
         await Medicine.findOneAndDelete({ _id: id });

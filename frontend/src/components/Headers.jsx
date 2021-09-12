@@ -7,6 +7,7 @@ import IconButton from '@material-ui/core/IconButton';
 import image from '../assets/large_pharmacyleaf.png';
 import { Link } from '@material-ui/core';
 import { useAuth } from '../provider/AuthProvider';
+import cookie from 'react-cookies';
 
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -83,7 +84,10 @@ export default function Headers() {
               href="/"
               variant="h6"
               color="inherit"
-              onClick={() => setAuth(null)}
+              onClick={() => {
+                cookie.remove('token');
+                setAuth(null);
+              }}
             >
               Logout As Admin
             </Link>
