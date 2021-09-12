@@ -9,6 +9,7 @@ import { Base64 } from 'js-base64';
 import { useAuth } from '../provider/AuthProvider';
 import { useHistory } from 'react-router';
 import cookie from 'react-cookies';
+import AlertDialog from './Alert';
 
 const useStyles = makeStyles((theme) => ({
   container: {
@@ -48,6 +49,7 @@ export default function Login() {
   const classes = useStyles();
   const [loginData, setLoginData] = useState({ email: '', password: '' });
   const { setAuth } = useAuth();
+  const [showAlertObj, setShowAlertObj] = useState({ renderAlert: false });
   const history = useHistory();
 
   async function login() {
@@ -67,6 +69,13 @@ export default function Login() {
       history.push('/products');
     } catch (error) {
       console.log('the email ', error);
+      setShowAlertObj({
+        renderAlert: true,
+        title: 'there are error?',
+        message: "couldn't login , Check your email or password  ",
+        flag: true,
+        historyFlag: { flag: false, route: '' },
+      });
     }
   }
 
@@ -129,6 +138,14 @@ export default function Login() {
           Register
         </Link>
       </Typography>
+
+      {/* alert */}
+      {showAlertObj.renderAlert ? (
+        <AlertDialog
+          showAlertObj={showAlertObj}
+          setShowAlertObj={setShowAlertObj}
+        />
+      ) : null}
     </div>
   );
 }
