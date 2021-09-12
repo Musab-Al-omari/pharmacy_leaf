@@ -15,7 +15,6 @@ import {
   TextField,
   Typography,
 } from '@material-ui/core';
-import { useAuth } from '../provider/AuthProvider';
 
 const useStyles = makeStyles((theme) => ({
   root: {
