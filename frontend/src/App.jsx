@@ -9,11 +9,9 @@ import {
   BrowserRouter as Router,
   Switch,
   Route,
-  Link,
-  useRouteMatch,
-  useParams,
   Redirect,
 } from 'react-router-dom';
+import MainProducts from './components/MainProducts';
 function App() {
   const { auth } = useAuth();
   return (
@@ -30,6 +28,9 @@ function App() {
             </Route>
             <Route exact path="/Register">
               <Register />
+            </Route>
+            <Route exact path="/MainProducts">
+              <MainProducts />
             </Route>
           </Switch>
         </div>

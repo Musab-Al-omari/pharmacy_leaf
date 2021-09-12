@@ -77,32 +77,37 @@ export default function Headers() {
         <Typography variant="h6" className={classes.title}>
           Welcome into Pharmacy Leaf
         </Typography>
+        <div className={classes.link}>
+          <Link href="/MainProducts" variant="h6" color="inherit">
+            Main Products
+          </Link>
 
-        {auth ? (
-          <div className={classes.link}>
-            <Link
-              href="/"
-              variant="h6"
-              color="inherit"
-              onClick={() => {
-                cookie.remove('token');
-                setAuth(null);
-              }}
-            >
-              Logout As Admin
-            </Link>
-          </div>
-        ) : (
-          <div className={classes.link}>
-            <Link href="/" variant="h6" color="inherit">
-              Login As Admin
-            </Link>
+          {auth ? (
+            <div className={classes.link}>
+              <Link
+                href="/"
+                variant="h6"
+                color="inherit"
+                onClick={() => {
+                  cookie.remove('token');
+                  setAuth(null);
+                }}
+              >
+                Logout As Admin
+              </Link>
+            </div>
+          ) : (
+            <div className={classes.link}>
+              <Link href="/" variant="h6" color="inherit">
+                Login As Admin
+              </Link>
 
-            <Link href="/Register" variant="h6" color="inherit">
-              Register As Admin
-            </Link>
-          </div>
-        )}
+              <Link href="/Register" variant="h6" color="inherit">
+                Register As Admin
+              </Link>
+            </div>
+          )}
+        </div>
       </Toolbar>
     </AppBar>
   );

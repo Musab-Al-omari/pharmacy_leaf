@@ -31,6 +31,7 @@ MedicineRouter.get('/', async (req, res) => {
 MedicineRouter.delete('/:id', bearerAuth, async (req, res) => {
     try {
         const id = req.params.id;
+        console.log(id);
         await Medicine.findOneAndDelete({ _id: id });
         res.status(201).json('item deleted');
     } catch (error) {
